@@ -27,6 +27,7 @@ table = {
     '44': '-'
     }
 
+
 class game_2048():
     def __init__(self, master):
         self.master = master
@@ -34,89 +35,88 @@ class game_2048():
 
         self.color_code = {
             '-': 0,
-            2: 1,
-            4: 2,
-            8: 3,
-            16: 4,
-            32: 5,
-            64: 6,
-            128: 7,
-            256: 8,
-            512: 9,
-            1024: 10,
-            2048: 11
+            2: 20,
+            4: 25,
+            8: 30,
+            16: 35,
+            32: 41,
+            64: 45,
+            128: 50,
+            256: 55,
+            512: 60,
+            1024: 65,
+            2048: 70
             }
 
         self.user_name = None
         self.steps = 0
 
-        self.up_button = Button(master, text="↑", command=lambda:[self.up(), self.printtable(), self.span2(), self.step_Counter()])
-        self.down_button = Button(master, text="↓", command=lambda:[self.down(), self.printtable(), self.span2(), self.step_Counter()])
-        self.left_button = Button(master, text="←", command=lambda:[self.left(), self.printtable(), self.span2(), self.step_Counter()])
-        self.right_button = Button(master, text="→", command=lambda:[self.right(), self.printtable(), self.span2(), self.step_Counter()])
-        self.usrname_button = Button(master, text="Enter", command=lambda:self.store_userName()) 
+        self.up_button = Button(master, text="↑", command=lambda: [self.up(), self.printtable(), self.span2(), self.step_Counter()])
+        self.down_button = Button(master, text="↓", command=lambda: [self.down(), self.printtable(), self.span2(), self.step_Counter()])
+        self.left_button = Button(master, text="←", command=lambda: [self.left(), self.printtable(), self.span2(), self.step_Counter()])
+        self.right_button = Button(master, text="→", command=lambda: [self.right(), self.printtable(), self.span2(), self.step_Counter()])
+        self.usrname_button = Button(master, text="Enter", command=lambda: self.store_userName())
         self.usrname = Label(master, text="Player name: ")
         self.entry = Entry(master, validate="none",)
         self.steps_made = StringVar()
         self.counter = Label(master, text="Steps: ")
         self.made_steps = Label(master, textvariable=self.steps_made)
         self.greetings = Label(master, text="Welcome on board!")
-        
-        self.usrname.grid(row=0 , column=0, sticky=W+E)
-        self.usrname_button.grid(row=0 , column=2, sticky=W+E)
-        self.entry.grid(row=0 , column=1, sticky=W+E) 
-        self.up_button.grid(row=1 , column=4, sticky=W+E)
-        self.left_button.grid(row=2 , column=3, sticky=W+E)  
-        self.down_button.grid(row=2 , column=4, sticky=W+E) 
-        self.right_button.grid(row=2 , column=5, sticky=W+E) 
+        self.save_button = Button(master, text="Save", command=lambda: self.savegame())
+        self.load_button = Button(master, text="Load", command=lambda: [self.loadgame(), self.printtable()])
+
+        self.usrname.grid(row=0, column=0, sticky=W+E)
+        self.usrname_button.grid(row=0, column=2, sticky=W+E)
+        self.entry.grid(row=0, column=1, sticky=W+E)
+        self.up_button.grid(row=1, column=4, sticky=W+E)
+        self.left_button.grid(row=2, column=3, sticky=W+E)
+        self.down_button.grid(row=2, column=4, sticky=W+E)
+        self.right_button.grid(row=2, column=5, sticky=W+E)
         self.counter.grid(row=2, column=0)
         self.made_steps.grid(row=2, column=1)
-        self.greetings.grid(row=3 , column=1, sticky=W+E+N+S)
-       
+        self.save_button.grid(row=3, column=0)
+        self.load_button.grid(row=3, column=1)
+        self.greetings.grid(row=4, column=1, sticky=W+E+N+S)
+
         self.span2()
         self.span2()
         self.printtable()
 
     def savegame(self):
-        with open('savegame.csv', 'w') as f:
-            t = []
+        with open('savegame.csv', 'w') as self.f:
+            self.t = []
             for k, v in table.items():
-                t.append('{key}: {value}'.format(key=str(k), value=(v)))
-            f.write(','.join(t))
-    print('Saved!')
+                self.t.append('{key}: {value}'.format(key=str(k), value=(v)))
+            self.f.write(','.join(self.t))
 
+    def isint(self, x):
+        try:
+            int(x)
+            return int(x)
+        except ValueError:
+            return str(x)
 
     def loadgame(self):
-
-        def isint(x):
-            try:
-                int(x)
-                return int(x)
-            except ValueError:
-                return str(x)
 
         with open('savegame.csv', 'r') as f:
             global table
             table = {}
             t = f.read().split(',')
             for i in t:
-                values = i.split(': ')
-                table[values[0]] = isint(values[1])
+                self.values = i.split(': ')
+                table[self.values[0]] = self.isint(self.values[1])
 
     def step_Counter(self):
         self.steps += 1
         self.steps_made.set(self.steps)
         return(self.steps)
-          
-    def store_userName(self):   
+
+    def store_userName(self):
         self.user_name = self.entry.get()
-        if self.user_name != None:
+        if self.user_name is not None:
             self.entry.delete(0, 'end')
         return(self.user_name)
-       
-    def color(self, x):
-        return bg(self.color_code[table[x]])
-  
+
     def printtable(self):
         os.system('cls' if os.name == 'nt' else 'clear')
         score = []
@@ -146,7 +146,7 @@ class game_2048():
             '{background} {:^4}'.format(table['24'], background=bg(self.color_code[table['24']])),
             '{background} {:^4}'.format(table['34'], background=bg(self.color_code[table['34']])),
             '{background} {:^4}'.format(table['44'], background=bg(self.color_code[table['44']])))
-        print(bg(0))
+        print(attr(0))
 
     def span2(self):
         table[random.choice(list([i for i, j in table.items() if j == '-']))] = 2
@@ -165,7 +165,7 @@ class game_2048():
                     z = z + 1
                     if table[str(x) + str(z)] != '-' and table[str(x) + str(z)] == table[str(x) + str(z + 1)]:
                         table[str(x) + str(z)] = table[str(x) + str(z)] * 2
-                        table[str(x) + str(z + 1)] = '-'     
+                        table[str(x) + str(z + 1)] = '-'
 
     def downCollumn(self, x):
         for self.y in range(3):
@@ -183,7 +183,6 @@ class game_2048():
                     table[str(x) + str(z)] = table[str(x) + str(z)] * 2
                     table[str(x) + str(z - 1)] = '-'
 
-
     def leftRow(self, x):
         for y in range(3):
             z = 0
@@ -200,7 +199,6 @@ class game_2048():
                     table[str(z) + str(x)] = table[str(z + 1) + str(x)] * 2
                     table[str(z + 1) + str(x)] = '-'
 
-
     def rightRow(self, x):
         for y in range(3):
             z = 5
@@ -215,7 +213,7 @@ class game_2048():
                 z = z - 1
                 if table[str(z) + str(x)] != '-' and table[str(z) + str(x)] == table[str(z - 1) + str(x)]:
                     table[str(z) + str(x)] = table[str(z - 1) + str(x)] * 2
-                    table[str(z - 1) + str(x)] = '-'   
+                    table[str(z - 1) + str(x)] = '-'
 
     def up(self):
             for z in range(3):
@@ -231,7 +229,6 @@ class game_2048():
                 self.downCollumn(z + 1)
                 z = z + 1
 
-
     def left(self):
         for z in range(3):
             z = 0
@@ -239,14 +236,13 @@ class game_2048():
                 self.leftRow(z + 1)
                 z = z + 1
 
-
     def right(self):
         for z in range(3):
             z = 0
             for w in range(4):
                 self.rightRow(z + 1)
                 z = z + 1
-    
+
 
 root = Tk()
 my_gui = game_2048(root)
